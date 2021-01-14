@@ -68,6 +68,7 @@ jobs:
         password: ${{ secrets.BOT_EMAIL_PASSWORD }}
         subject: Github Actions job result
         # Literal body:
-        body: Build job of ${{ github.repository }} v${{ steps.apk.outputs.versionNum }}-${{ env.now }} completed successfully!.
+        body: Build job of ${{ github.repository }} v${{ steps.apk.outputs.versionNum }}-${{ env.now }} completed successfully!.|
+          see this ${{ steps.create_release.outputs.html_url }}
         to: ${{secrets.MAIL_TO}}
         from: ${{secrets.BOT_EMAIL}}
