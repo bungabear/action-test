@@ -23,16 +23,31 @@ jobs:
     - run: flutter test
     - run: flutter build apk
     
+    # 현재시간 https://stackoverflow.com/a/60942437
+    - name: Get current date
+      id: date
+      run: echo "name=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
+      
+    # apk 정보 https://github.com/marketplace/actions/get-apk-version#outputs
+    - name: Get Apk Info
+      id: apk
+      uses: JantHsueh/get-apk-version-action@master
+      with:
+       apkPath: app/build/outputs/apk/release/app-release.apk
+    
+    # Release 생성 
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
+        tag_name: v${{ steps.apk.outputs.versionNum }}-${{ steps.date.outputs.date }}
+        release_name: Release v${{ steps.apk.outputs.versionNum }}-${{ steps.date.outputs.date }}
         draft: false
         prerelease: false
+        
+    # 파일 업로드
     - name: Upload Release Asset
       id: upload-release-asset 
       uses: actions/upload-release-asset@v1
@@ -50,10 +65,10 @@ jobs:
         server_address: smtp.gmail.com
         server_port: 465
         # Gmail이 보안수준을 내리지 않으면 메일 송신을 거절하여, 별도 계정으로 사용
-        username: ${{secrets.BOT_EMAIL}}
-        password: ${{secrets.BOT_EMAIL_PASSWORD}}
+        username: ${{ secrets.BOT_EMAIL }}
+        password: ${{ secrets.BOT_EMAIL_PASSWORD }}
         subject: Github Actions job result
         # Literal body:
-        body: Build job of ${{github.repository}} completed successfully!.
+        body: Build job of ${{ github.repository }} v${{ steps.apk.outputs.versionNum }}-${{ steps.date.outputs.date }} completed successfully!.
         to: ${{secrets.MAIL_TO}}
         from: ${{secrets.BOT_EMAIL}}
