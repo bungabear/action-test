@@ -27,3 +27,17 @@ jobs:
       with:
         name: app
         path: build/app/outputs/flutter-apk/app-release.apk
+    - name: Send mail
+      uses: dawidd6/action-send-mail@v2
+      with:
+        server_address: smtp.gmail.com
+        server_port: 465
+        username: ${{secrets.GMAIL_ID}}
+        password: ${{secrets.GMAIL_PASSWORD}}
+        subject: Github Actions job result
+        # Literal body:
+        body: Build job of ${{github.repository}} completed successfully!
+        to: ${{secrets.GMAIL_ID}}
+        from: ${{secrets.GMAIL_ID}}
+        # Optional attachments:
+        attachments: build/app/outputs/flutter-apk/app-release.apk
