@@ -31,9 +31,9 @@ jobs:
     # apk 정보 https://github.com/marketplace/actions/get-apk-version#outputs
     - name: Get Apk Info
       id: apk
-      uses: JantHsueh/get-apk-version-action@master
+      uses: JantHsueh/get-apk-info-action@1.0
       with:
-       apkPath: app/build/outputs/apk/release/app-release.apk
+       apkPath: build/app/outputs/flutter-apk/app-release.apk
     
     # Release 생성 
     - name: Create Release
