@@ -31,7 +31,7 @@ jobs:
         # Gmail에 apk를 바로 보낼 수 없어 비밀번호화 함께 7z로 묶음
     - uses: edgarrc/action-7z@v1.0.4
       with:
-        args: 7z a -t7z -mx=9 -p${{secrets.FILE_PASSWORD}} build.7z build/app/outputs/flutter-apk/app-release.apk
+        args: 7z a -t7z -mx=9 -p${{secrets.FILE_PASSWORD}} build.txt build/app/outputs/flutter-apk/app-release.apk
     
     - name: Send mail
       uses: dawidd6/action-send-mail@v2
@@ -47,4 +47,4 @@ jobs:
         to: ${{secrets.MAIL_TO}}
         from: ${{secrets.BOT_EMAIL}}
         # Optional attachments:
-        attachments: build.7z
+        attachments: build.txt
