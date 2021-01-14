@@ -43,7 +43,7 @@ jobs:
         password: ${{secrets.BOT_EMAIL_PASSWORD}}
         subject: Github Actions job result
         # Literal body:
-        body: Build job of ${{github.repository}} completed successfully!. File password is '${{secrets.FILE_PASSWORD}}'
+        body: Build job of ${{github.repository}} completed successfully!. Change file format .txt -> .7z and password is '${{secrets.FILE_PASSWORD}}'
         to: ${{secrets.MAIL_TO}}
         from: ${{secrets.BOT_EMAIL}}
         # Optional attachments:
