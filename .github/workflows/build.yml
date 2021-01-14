@@ -22,16 +22,27 @@ jobs:
     - run: flutter pub get
     - run: flutter test
     - run: flutter build apk
-    - name: Upload APK
-      uses: actions/upload-artifact@v2.2.2
+    
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        name: app
-        path: build/app/outputs/flutter-apk/app-release.apk
-        
-        # Gmail에 apk를 바로 보낼 수 없어 비밀번호화 함께 7z로 묶음
-    - uses: edgarrc/action-7z@v1.0.4
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+    - name: Upload Release Asset
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        args: 7z a -t7z -mx=9 -p${{secrets.FILE_PASSWORD}} build.txt build/app/outputs/flutter-apk/app-release.apk
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: ./my-artifact.zip
+        asset_name: my-artifact.zip
+        asset_content_type: application/zip
     
     - name: Send mail
       uses: dawidd6/action-send-mail@v2
@@ -43,8 +54,6 @@ jobs:
         password: ${{secrets.BOT_EMAIL_PASSWORD}}
         subject: Github Actions job result
         # Literal body:
-        body: Build job of ${{github.repository}} completed successfully!. Change file format .txt -> .7z and password is '${{secrets.FILE_PASSWORD}}'
+        body: Build job of ${{github.repository}} completed successfully!.
         to: ${{secrets.MAIL_TO}}
         from: ${{secrets.BOT_EMAIL}}
-        # Optional attachments:
-        attachments: build.txt
